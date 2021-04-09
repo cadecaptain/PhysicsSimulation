@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
             Vector2 diff = obj.rigidbody.position - go.rigidbody.position;
             float rsq = diff.sqrMagnitude;
             if (go != obj)
-                c += go.mass * diff / rsq;
+                c += go.rigidbody.mass * diff / rsq;
         }
 
         return G * c;

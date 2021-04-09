@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Gravity : MonoBehaviour
 {
-    public float mass = 1;
     public Rigidbody2D rigidbody;
     public Vector2 startVelocity = Vector2.zero;
     // Start is called before the first frame update
