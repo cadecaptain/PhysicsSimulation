@@ -27,6 +27,12 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void PauseSimulation() {
+        Time.timeScale = 1-Time.timeScale;
+
+    }
+
+
     public Vector2 deltaV(Gravity obj) {
         Vector2 c = Vector2.zero;
         
