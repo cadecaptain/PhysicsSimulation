@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    static float G = -0.01f;
+    static float G = -.1f;
     public static GameManager Instance { get; private set; }
     List<Gravity> physObjects;
 

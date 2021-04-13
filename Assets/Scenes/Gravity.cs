@@ -16,8 +16,12 @@ public class Gravity : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rigidbody.velocity += GameManager.Instance.deltaV(this);
        // Debug.Log(rigidbody.velocity);
+    }
+
+    private void FixedUpdate()
+    {
+        rigidbody.velocity += GameManager.Instance.deltaV(this);
     }
 
     private void OnDrawGizmos()
