@@ -36,13 +36,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void LoadScene()
     {
         physObjects = new List<Gravity>();
         camera = FindObjectOfType<Camera>();
-        
-        foreach (Gravity g in FindObjectsOfType<Gravity>()) {
+
+        foreach (Gravity g in FindObjectsOfType<Gravity>())
+        {
             physObjects.Add(g);
         }
 
@@ -51,6 +51,9 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!camera)
+            LoadScene();   
+
         CameraReposition();
     }
 
@@ -64,8 +67,8 @@ public class GameManager : MonoBehaviour
             Vector3 p = go.gameObject.transform.position;
             v += new Vector2(p.x, p.y);
         }
-
-        return v/physObjects.Count;
+        if (physObjects.Count > 0) v /= physObjects.Count;
+        return v;
     }
 
 
