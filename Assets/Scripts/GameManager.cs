@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -87,7 +90,12 @@ public class GameManager : MonoBehaviour
 
     public void startOnClick()
     {
-
+        titleText.SetActive(false);
+        startButton.SetActive(false);
+        howToButton.SetActive(false);
+        creditsButton.SetActive(false);
+        background.SetActive(false);
+        StartCoroutine(LoadYourAsyncScene("Main Scene"));
     }
 
     public void creditsOnClick()
@@ -130,5 +138,17 @@ public class GameManager : MonoBehaviour
         backButton.SetActive(false);
         creditsText.SetActive(false);
         howToText.SetActive(false);
+    }
+
+    IEnumerator LoadYourAsyncScene(string scene)
+    {
+        Debug.Log("Loading " + scene);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
+
+        // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 }
