@@ -1,50 +1,101 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class calculate the force between the objects and the vector / direction of the force.
+/// https://en.wikipedia.org/wiki/Gravitational_constant
+/// </summary>
 public class Attractor : MonoBehaviour
 {
-	const float G = 667.4f;
 
-	public static List<Attractor> Attractors;
+    private SpawnScript spawnScript;
 
-	public Rigidbody rb;
+    [SerializeField] private Rigidbody2D GO_RigidBody = null;
 
-	void FixedUpdate()
-	{
-		foreach (Attractor attractor in Attractors)
-		{
-			if (attractor != this)
-				Attract(attractor);
-		}
-	}
+    // The gravitational constant for the calculation.
+    // https://en.wikipedia.org/wiki/Gravitational_constant
+    private float G = 0.667408f;
 
-	void OnEnable()
-	{
-		if (Attractors == null)
-			Attractors = new List<Attractor>();
+    public static List<Attractor> attractors;
 
-		Attractors.Add(this);
-	}
+    private Vector2 direction;
+    private float distance;
+    private float theForce;
+    private Vector2 force;
 
-	void OnDisable()
-	{
-		Attractors.Remove(this);
-	}
+    public List<Attractor> GetAttractors()
+    {
+        return attractors;
+    }
 
-	void Attract(Attractor objToAttract)
-	{
-		Rigidbody rbToAttract = objToAttract.rb;
+    private void Start()
+    {
+        spawnScript = GameObject.FindGameObjectWithTag("Scripts").GetComponent<SpawnScript>();
+    }
 
-		Vector2 direction = rb.position - rbToAttract.position;
-		float distance = direction.magnitude;
+    /// <summary>
+    /// Call attractor method on all objects.
+    /// </summary>
+    private void FixedUpdate()
+    {
+        foreach (Attractor attractor in attractors)
+        {
+            if (attractor != this)
+            {
+                Attract(attractor);
+            }
+        }
+    }
 
-		if (distance == 0f)
-			return;
+    /// <summary>
+    /// Add this object to the list.
+    /// </summary>
+    private void OnEnable()
+    {
+        if (attractors == null)
+        {
+            attractors = new List<Attractor>();
+        }
 
-		float forceMagnitude = G * (rb.mass * rbToAttract.mass) / Mathf.Pow(distance, 2);
-		Vector2 force = direction.normalized * forceMagnitude;
+        attractors.Add(this);
+    }
 
-		rbToAttract.AddForce(force);
-	}
+    /// <summary>
+    /// Remove this object from the list.
+    /// </summary>
+    private void OnDisable()
+    {
+        attractors.Remove(this);
+    }
+
+    /// <summary>
+    /// Calc force and add it to the objects rigidbody.
+    /// </summary>
+    /// <param name="objToAttract"></param>
+    public void Attract(Attractor objToAttract)
+    {
+        direction = GO_RigidBody.position - objToAttract.GO_RigidBody.position;
+        distance = direction.magnitude;
+
+        if (distance == 0f)
+        {
+            return;
+        }
+
+        force = direction.normalized * ((GO_RigidBody.mass * objToAttract.GO_RigidBody.mass) / (distance * distance)) * G;
+        objToAttract.GO_RigidBody.AddForce(force);
+    }
+
+    //Doesn't despawn the object that hits the sun
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!collision.gameObject.tag.Equals("Sun") && collision.gameObject.tag.Equals(tag) == false)
+        {
+            Destroy(collision.gameObject);
+            if (spawnScript)
+            {
+                spawnScript.SpawnNewPanet();
+            }
+        }
+    }
 }
