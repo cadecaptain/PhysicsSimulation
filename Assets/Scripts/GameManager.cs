@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class GameManager : MonoBehaviour
     public GameObject dropdown;
     public List<string> presetLevels;
     private int selectedLevel;
+    public AudioMixer mixer;
+    public GameObject backgroundAudio;
+
 
 
     private void Awake()
@@ -32,12 +36,14 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(canvas);
             DontDestroyOnLoad(events);
+            DontDestroyOnLoad(backgroundAudio);
         }
         else
         {
             Destroy(gameObject);
             Destroy(canvas);
             Destroy(events);
+            Destroy(backgroundAudio);
         }
     }
 
@@ -178,5 +184,10 @@ public class GameManager : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    public void setVolume(float sliderValue)
+    {
+        mixer.SetFloat("backgroundVolume", (Mathf.Log10(sliderValue) * 20));
     }
 }
