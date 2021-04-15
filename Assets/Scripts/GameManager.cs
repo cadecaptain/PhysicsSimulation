@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public AudioMixer mixer;
     public GameObject backgroundAudio;
 
+    public GameObject CenterOfMassPrefab;
+    GameObject centerOfMassIndicator;
 
 
     private void Awake()
@@ -57,9 +59,18 @@ public class GameManager : MonoBehaviour
             physObjects.Add(g);
         }
 
+        SetUpCoM();
     }
 
 
+    void SetUpCoM() {
+        centerOfMassIndicator = Instantiate(CenterOfMassPrefab, CenterOfSystem(), Quaternion.identity);
+        SpriteRenderer sr = centerOfMassIndicator.gameObject.GetComponent<SpriteRenderer>();
+        //CoM is slightly translucent
+        sr.color = new Color(1, 1, 1, .5f);
+        //and it is drawn in front of other objects
+        sr.sortingOrder = 5;        
+    }
 
     // Update is called once per frame
     void Update()
@@ -68,6 +79,7 @@ public class GameManager : MonoBehaviour
             LoadScene();
 
         CameraReposition();
+        centerOfMassIndicator.transform.position = CenterOfSystem();
     }
 
     public static void PauseSimulation()
@@ -78,12 +90,14 @@ public class GameManager : MonoBehaviour
     Vector2 CenterOfSystem()
     {
         Vector2 v = Vector2.zero;
+        float totalMass = 0.0f;
         foreach (Gravity go in physObjects)
         {
             Vector3 p = go.gameObject.transform.position;
-            v += new Vector2(p.x, p.y);
+            v += go.rigidbody.mass * new Vector2(p.x, p.y);
+            totalMass += go.rigidbody.mass;
         }
-        if (physObjects.Count > 0) v /= physObjects.Count;
+        if (physObjects.Count > 0) v /= totalMass;
         return v;
     }
 
