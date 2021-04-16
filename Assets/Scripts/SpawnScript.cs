@@ -16,8 +16,8 @@ public class SpawnScript : MonoBehaviour
     ///private float radius = 20f;
 
     */
-    private static float minPlanetMass = 5f;
-    private static float maxPlanetMass = 25f;
+    private static float minPlanetMass = .1f;
+    private static float maxPlanetMass = 3f;
     private static float spawnDelay = 15f;
     private static float maxPlanetSize = 0.2f;
 

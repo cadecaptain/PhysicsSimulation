@@ -97,8 +97,7 @@ public class GameManager : MonoBehaviour
         }
 
         foreach (Gravity go in toRemove) {
-            physObjects.Remove(go);
-            Destroy(go.gameObject);
+            DestroyBody(go);
         }
 
     }
@@ -108,6 +107,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("Creating new Planet");
         physObjects.Add(
             SpawnScript.SpawnNewPlanet(pos, planetPrefab));
+    }
+
+    public void DestroyBody(Gravity g) {
+        physObjects.Remove(g);
+        Destroy(g.gameObject);
     }
 
 

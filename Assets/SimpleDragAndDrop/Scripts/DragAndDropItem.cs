@@ -19,8 +19,7 @@ public class DragAndDropItem : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 	public static event DragEvent OnItemDragStartEvent;                             // Drag start event
 	public static event DragEvent OnItemDragEndEvent;                               // Drag end event
 
-	private static Canvas canvas;                                                   // Canvas for item drag operation
-	private static Camera camera;
+	private static Canvas canvas;
 
 	/// <summary>
 	/// Awake this instance.
