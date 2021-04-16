@@ -5,23 +5,23 @@ using UnityEngine;
 public class SpawnScript : MonoBehaviour
 {
 
-    [SerializeField] private GameObject planetPrefab = null;
-    [SerializeField] private GameObject sun = null;
-    [SerializeField] private GameObject centerObject = null;
 
+
+
+    /*
     private Vector2 sunVelocity = Vector2.zero;
     private int numberOfPlanets = 5;
 
 
     ///private float radius = 20f;
 
+    */
+    private static float minPlanetMass = 5f;
+    private static float maxPlanetMass = 25f;
+    private static float spawnDelay = 15f;
+    private static float maxPlanetSize = 0.2f;
 
-    private float minPlanetMass = 5f;
-    private float maxPlanetMass = 25f;
-    private float spawnDelay = 15f; 
-    private float maxPlanetSize = 0.2f;
-
-
+    /*
 
     private List<GameObject> planets = new List<GameObject>();
 
@@ -65,38 +65,33 @@ public class SpawnScript : MonoBehaviour
         }
     }
 
-
-    public void SpawnNewPanet()
+    */
+    static public Gravity SpawnNewPlanet(Vector2 position, GameObject prefab)
     {
-        GameObject planet = Instantiate(planetPrefab);
-
-        float x = 5;
-        float y = 5;
-
-
-        //Add below back when fixed the limits on random spawn location
-        ///float x = -radius / 2f + Random.value * radius;
-        ///float y = -radius / 2f + Random.value * radius;
-        ///
-
-        Vector2 position = new Vector2(x, y);
+        GameObject planet = Instantiate(prefab);
+        Gravity g = planet.GetComponent<Gravity>();
+        g.rigidbody = planet.GetComponent<Rigidbody2D>();
         planet.transform.position = position;
+        g.transform.position = position;
+        g.rigidbody.position = position;
+
+        float m = minPlanetMass + Random.value * (maxPlanetMass - minPlanetMass);
+        g.rigidbody.mass = m;
+
         float scale = 1f + Random.value * maxPlanetSize;
         planet.transform.localScale = new Vector2(scale, scale);
 
-        float m = minPlanetMass + Random.value * (maxPlanetMass - minPlanetMass);
-        Rigidbody prb = planet.GetComponent<Rigidbody>();
-        if (prb)
-        {
-            prb.mass = m;
+        Vector2 toCenter = GameManager.Instance.deltaV(g); 
 
-            //Static setting of velocity
-            prb.velocity = new Vector2(3, 0);
-        }
+        g.startVelocity =
+            (Random.value * 8 + 5) * (Quaternion.Euler(0,0,90) * 
+            toCenter).normalized;
 
-        planet.GetComponent<Renderer>().material.color = new Color(0.5f + Random.value / 2, 0.5f + Random.value / 2, 0.5f + Random.value / 2);
+        Debug.Log(g.startVelocity+" "+toCenter);
 
-        planets.Add(planet);
+        planet.GetComponent<SpriteRenderer>().color = new Color(Random.value, Random.value, Random.value);
+
+        return g;
     }
 
     private void Update()

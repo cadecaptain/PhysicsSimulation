@@ -36,12 +36,14 @@ public class Gravity : MonoBehaviour
 
     public void changeMass(float m)
     {
-
         rigidbody.mass = m;
         float screenSize = Mathf.Sqrt(Mathf.Sqrt(m));
         this.gameObject.transform.localScale = Vector3.one * screenSize;
+    }
 
-
+    public void changeVelocity(Vector2 v)
+    {
+        this.rigidbody.velocity = v;
     }
 
 }

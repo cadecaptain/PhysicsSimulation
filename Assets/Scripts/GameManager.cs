@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
     public GameObject CenterOfMassPrefab;
     GameObject centerOfMassIndicator;
 
+    public GameObject planetPrefab;
+    public GameObject sunPrefab;
+
 
     private void Awake()
     {
@@ -79,8 +82,34 @@ public class GameManager : MonoBehaviour
             LoadScene();
 
         CameraReposition();
+        CullFaroffObjects();
         centerOfMassIndicator.transform.position = CenterOfSystem();
     }
+
+    void CullFaroffObjects()
+    {
+        Vector2 c = CenterOfSystem();
+        HashSet<Gravity> toRemove = new HashSet<Gravity>();
+        foreach (Gravity go in physObjects) {
+            if ((go.rigidbody.position - c).magnitude > 10) {
+                toRemove.Add(go);
+            }
+        }
+
+        foreach (Gravity go in toRemove) {
+            physObjects.Remove(go);
+            Destroy(go.gameObject);
+        }
+
+    }
+
+
+    public void CreateBody(Vector2 pos) {
+        Debug.Log("Creating new Planet");
+        physObjects.Add(
+            SpawnScript.SpawnNewPlanet(pos, planetPrefab));
+    }
+
 
     public static void PauseSimulation()
     {
