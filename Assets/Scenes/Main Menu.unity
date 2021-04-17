@@ -1850,7 +1850,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1914390921}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: PauseSimulation
+        m_MethodName: TogglePause
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3872,6 +3872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c910244a5e7800b4aa32d39c0e55f13f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 0}
   startButton: {fileID: 293822895}
   creditsButton: {fileID: 464868504}
   howToButton: {fileID: 699722856}

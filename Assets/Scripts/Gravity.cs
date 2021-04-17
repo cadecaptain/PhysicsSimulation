@@ -8,14 +8,12 @@ public class Gravity : MonoBehaviour
     internal Rigidbody2D rigidbody;
     public Vector2 startVelocity = Vector2.zero;
     internal bool beingDragged;
-    Camera camera;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         rigidbody.velocity = startVelocity;
-        camera = FindObjectOfType<Camera>();
     }
 
     private void OnMouseDown()
@@ -26,7 +24,7 @@ public class Gravity : MonoBehaviour
     private void OnMouseDrag()
     {
         rigidbody.velocity = Vector2.zero;
-        rigidbody.position = camera.ScreenToWorldPoint(Input.mousePosition);
+        rigidbody.position = GameManager.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
     }
 
     private void OnMouseUp()

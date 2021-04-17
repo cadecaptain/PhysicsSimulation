@@ -69,8 +69,8 @@ public class SpawnScript : MonoBehaviour
     static public Gravity SpawnNewPlanet(Vector2 position, GameObject prefab)
     {
         GameObject planet = Instantiate(prefab);
-        Gravity g = planet.GetComponent<Gravity>();
-        g.rigidbody = planet.GetComponent<Rigidbody2D>();
+        Gravity g = planet.GetComponentInChildren<Gravity>();
+        g.rigidbody = planet.GetComponentInChildren<Rigidbody2D>();
         planet.transform.position = position;
         g.transform.position = position;
         g.rigidbody.position = position;
@@ -89,7 +89,7 @@ public class SpawnScript : MonoBehaviour
 
         Debug.Log(g.startVelocity+" "+toCenter);
 
-        planet.GetComponent<SpriteRenderer>().color = new Color(Random.value, Random.value, Random.value);
+        planet.GetComponentInChildren<SpriteRenderer>().color = new Color(Random.value, Random.value, Random.value);
 
         return g;
     }

@@ -213,6 +213,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1326398288173722553, guid: 81c141866fc482d49897b2313e2f906b, type: 3}
+      propertyPath: startVelocity.x
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4733263487374029643, guid: 81c141866fc482d49897b2313e2f906b, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -329,6 +333,10 @@ PrefabInstance:
     - target: {fileID: 1318839872153184546, guid: 5ca69cf1a8487a041810228c3804fb85, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324935060228127772, guid: 5ca69cf1a8487a041810228c3804fb85, type: 3}
+      propertyPath: m_Mass
+      value: 300
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ca69cf1a8487a041810228c3804fb85, type: 3}

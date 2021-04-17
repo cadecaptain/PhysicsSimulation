@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     float cameraShiftTolerance = 3;
     public static GameManager Instance { get; private set; }
     List<Gravity> physObjects;
-    Camera camera;
+    public Camera camera;
 
     public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton;
     public GameObject titleText, creditsText, howToText;
@@ -111,13 +111,32 @@ public class GameManager : MonoBehaviour
 
     public void DestroyBody(Gravity g) {
         physObjects.Remove(g);
-        Destroy(g.gameObject);
+        Debug.Log("CoM at " +
+                centerOfMassIndicator.transform.position +
+                 ", deleting object at " + g.rigidbody.transform.position);
+
+        Destroy(g.gameObject.transform.parent.gameObject);
     }
 
 
-    public static void PauseSimulation()
+    public static void TogglePause()
     {
         Time.timeScale = 1 - Time.timeScale;
+    }
+
+    public static void PauseTime()
+    {
+        Time.timeScale = 0;
+    }
+
+    public static void StartTime()
+    {
+        Time.timeScale = 1;
+    }
+
+    public static bool isPaused()
+    {
+        return Time.timeScale == 0;
     }
 
     Vector2 CenterOfSystem()
