@@ -20,6 +20,7 @@ public class VelocityHandler : MonoBehaviour
         //Debug.Log("rebasing velocity to " + delta);
         this.gameObject.transform.rotation = Quaternion.Euler(0,0,90) * Quaternion.LookRotation(Vector3.forward, delta);
         float stretch = delta.magnitude / stretchFactor;
+        if (stretch < 1) { stretch = Mathf.Max(.25f, Mathf.Sqrt(stretch)); }
         this.gameObject.transform.localScale = new Vector3(stretch, 1, 1);
     }
 
