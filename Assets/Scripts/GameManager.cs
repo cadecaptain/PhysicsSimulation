@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     List<Gravity> physObjects;
     public Camera camera;
 
-    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton;
+    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton, uiPanel, panelPauseButton;
     public GameObject titleText, creditsText, howToText;
     public GameObject volumeSlider;
     public GameObject canvas;
@@ -119,6 +119,22 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void HandleMenu()
+    {
+        if (uiPanel.activeSelf.Equals(false)){
+            uiPanel.SetActive(true);
+            panelPauseButton.SetActive(true);
+            TogglePause();
+        }
+        else
+        {
+            uiPanel.SetActive(false);
+            panelPauseButton.SetActive(false);
+            TogglePause();
+        }
+    }
+
+
     public static void TogglePause()
     {
         Time.timeScale = 1 - Time.timeScale;
@@ -191,6 +207,8 @@ public class GameManager : MonoBehaviour
         background.SetActive(false);
         dropdown.SetActive(false);
         pauseButton.SetActive(true);
+        uiPanel.SetActive(false);
+        panelPauseButton.SetActive(false);
         StartCoroutine(LoadYourAsyncScene(presetLevels[selectedLevel]));
     }
 
