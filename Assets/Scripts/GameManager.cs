@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     float cameraShiftTolerance = 3;
     public static GameManager Instance { get; private set; }
     List<Gravity> physObjects;
+    Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
     public Camera camera;
 
     public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton;
@@ -31,6 +32,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject planetPrefab;
     public GameObject sunPrefab;
+
+    public GameObject scrollView;
+    public GameObject ControllerView;
+    public GameObject PlanetControllerPrefab;
+
+    int ObjectCounter = 0;
 
 
     private void Awake()
@@ -60,6 +67,7 @@ public class GameManager : MonoBehaviour
         foreach (Gravity g in FindObjectsOfType<Gravity>())
         {
             physObjects.Add(g);
+            NewPlanetController(g, ++ObjectCounter);
         }
 
         SetUpCoM();
@@ -98,15 +106,34 @@ public class GameManager : MonoBehaviour
 
         foreach (Gravity go in toRemove) {
             DestroyBody(go);
+
         }
 
     }
 
 
+    public void NewPlanetController(Gravity g, int i) {
+        Debug.Log("Loading ui box " + i);
+
+        GameObject pc = Instantiate(PlanetControllerPrefab);
+        pc.transform.SetParent(ControllerView.gameObject.transform,false);
+
+        Slider s = pc.GetComponentInChildren<Slider>();
+        //.onValueChanged = new Slider.SliderEvent();
+        s.value = Mathf.Sqrt(g.rigidbody.mass);
+        s.onValueChanged.AddListener(f => g.changeMass(f*f));
+        pc.GetComponentInChildren<Text>().text = "Mass of Object " + i;
+
+        planetControllers.Add(g, pc);
+    }
+
     public void CreateBody(Vector2 pos) {
         Debug.Log("Creating new Planet");
-        physObjects.Add(
-            SpawnScript.SpawnNewPlanet(pos, planetPrefab));
+        Gravity g = SpawnScript.SpawnNewPlanet(pos, planetPrefab);
+
+        physObjects.Add(g);
+        NewPlanetController(g, ++ObjectCounter);
+
     }
 
     public void DestroyBody(Gravity g) {
@@ -116,6 +143,8 @@ public class GameManager : MonoBehaviour
                  ", deleting object at " + g.rigidbody.transform.position);
 
         Destroy(g.gameObject.transform.parent.gameObject);
+        Destroy(planetControllers[g]);
+        planetControllers.Remove(g);
     }
 
 
@@ -191,6 +220,7 @@ public class GameManager : MonoBehaviour
         background.SetActive(false);
         dropdown.SetActive(false);
         pauseButton.SetActive(true);
+        scrollView.SetActive(true);
         StartCoroutine(LoadYourAsyncScene(presetLevels[selectedLevel]));
     }
 

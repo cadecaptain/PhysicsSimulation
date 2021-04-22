@@ -14,22 +14,28 @@ public class Gravity : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         rigidbody.velocity = startVelocity;
+        SetSize();
     }
 
     private void OnMouseDown()
     {
         beingDragged = true;
+        startVelocity = rigidbody.velocity;
     }
 
     private void OnMouseDrag()
     {
         rigidbody.velocity = Vector2.zero;
-        rigidbody.position = GameManager.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 pos = GameManager.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
+        pos.z = 0;
+        this.gameObject.transform.position = pos;
+
     }
 
     private void OnMouseUp()
     {
         beingDragged = false;
+        rigidbody.velocity = startVelocity;
     }
 
     private void FixedUpdate()
@@ -50,7 +56,12 @@ public class Gravity : MonoBehaviour
     public void changeMass(float m)
     {
         rigidbody.mass = m;
-        float screenSize = Mathf.Sqrt(Mathf.Sqrt(m));
+        SetSize();
+    }
+
+    void SetSize()
+    {
+        float screenSize = 1+Mathf.Log(rigidbody.mass)/8;
         this.gameObject.transform.localScale = Vector3.one * screenSize;
     }
 
@@ -69,11 +80,12 @@ public class Gravity : MonoBehaviour
             (this.rigidbody.mass == otherGrav.rigidbody.mass && Compare(otherGrav)))
         {
             Vector2 netMomentum = rigidbody.velocity * rigidbody.mass + otherGrav.rigidbody.velocity * otherGrav.rigidbody.mass;
-            this.rigidbody.mass = this.rigidbody.mass + otherGrav.rigidbody.mass;
+            this.rigidbody.mass += otherGrav.rigidbody.mass;
             this.rigidbody.velocity = netMomentum / this.rigidbody.mass;
+            SetSize();
         } else {
             GameManager.Instance.DestroyBody(this);
-        }
+        }   
 
 
 
