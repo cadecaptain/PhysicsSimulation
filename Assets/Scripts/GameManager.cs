@@ -10,6 +10,11 @@ public class GameManager : MonoBehaviour
 {
     static float G = -1f;
     float cameraShiftTolerance = 3;
+    float zoomInTolerance = .35f;
+    float zoomOutTolerance = .1f;
+    int zoomTicks = 0;
+    const int zoomDelay = 5;
+
     public static GameManager Instance { get; private set; }
     List<Gravity> physObjects;
     Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
@@ -83,8 +88,7 @@ public class GameManager : MonoBehaviour
         sr.sortingOrder = 5;        
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!camera)
             LoadScene();
@@ -99,7 +103,7 @@ public class GameManager : MonoBehaviour
         Vector2 c = CenterOfSystem();
         HashSet<Gravity> toRemove = new HashSet<Gravity>();
         foreach (Gravity go in physObjects) {
-            if ((go.rigidbody.position - c).magnitude > 10) {
+            if ((go.rigidbody.position - c).magnitude > 30) {
                 toRemove.Add(go);
             }
         }
@@ -189,6 +193,39 @@ public class GameManager : MonoBehaviour
         center.z = camera.transform.position.z;
         if ((camera.transform.position - center).magnitude > cameraShiftTolerance) 
             camera.transform.position = Vector3.Lerp(camera.transform.position, center, .005f);
+
+        bool needToZoomOut = false;
+        bool needToZoomIn = true;
+
+        foreach (Gravity g in physObjects)
+        {
+            Vector3 v = camera.WorldToViewportPoint(g.transform.position);
+            Debug.Log(v);
+            needToZoomOut |= v.x < zoomOutTolerance
+                          || v.x > (1 - zoomOutTolerance)
+                          || v.y < zoomOutTolerance
+                          || v.y > (1 - zoomOutTolerance);
+
+            needToZoomIn &= v.x > zoomInTolerance
+                         && v.x < (1 - zoomInTolerance)
+                         && v.y > zoomInTolerance
+                         && v.y < (1 - zoomInTolerance);
+        }
+
+        if (needToZoomOut)
+        {
+            zoomTicks++;
+        }
+        else if (needToZoomIn)
+        {
+            zoomTicks--;
+        }
+        else { zoomTicks = 0; }
+
+        if (zoomTicks > zoomDelay || zoomTicks < -zoomDelay)
+        {
+            camera.orthographicSize += .005f * Mathf.Sign(zoomTicks);
+        }
     }
 
     public Vector2 deltaV(Gravity obj)
