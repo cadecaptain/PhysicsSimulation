@@ -40,7 +40,17 @@ public class Gravity : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!beingDragged) rigidbody.velocity += GameManager.Instance.deltaV(this);
+        if (!beingDragged) 
+        { 
+            Vector2 v = GameManager.Instance.deltaV(this);
+            if (!IsInvalid(v))
+                rigidbody.velocity += v;
+        }
+    }
+
+    bool IsInvalid(Vector2 v) {
+        return float.IsNaN(v.x) || float.IsInfinity(v.x)
+            || float.IsNaN(v.y) || float.IsInfinity(v.y);
     }
 
     private void OnDrawGizmos()
