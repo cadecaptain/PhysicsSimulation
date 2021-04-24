@@ -18,7 +18,7 @@ public class DragAndDropItem : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 	public delegate void DragEvent(DragAndDropItem item);
 	public static event DragEvent OnItemDragStartEvent;                             // Drag start event
 	public static event DragEvent OnItemDragEndEvent;                               // Drag end event
-
+	public GameObject planet;
 	private static Canvas canvas;
 
 	/// <summary>
@@ -86,7 +86,7 @@ public class DragAndDropItem : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 	{
 		Debug.Log("dropped");
 		GameManager.Instance.CreateBody(
-			FindObjectOfType<Camera>().ScreenToWorldPoint(icon.transform.position));
+			FindObjectOfType<Camera>().ScreenToWorldPoint(icon.transform.position), planet);
 		ResetConditions();
 	}
 

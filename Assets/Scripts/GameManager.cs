@@ -131,9 +131,9 @@ public class GameManager : MonoBehaviour
         planetControllers.Add(g, pc);
     }
 
-    public void CreateBody(Vector2 pos) {
+    public void CreateBody(Vector2 pos, GameObject planet) {
         Debug.Log("Creating new Planet");
-        Gravity g = SpawnScript.SpawnNewPlanet(pos, planetPrefab);
+        Gravity g = SpawnScript.SpawnNewPlanet(pos, planet);
 
         physObjects.Add(g);
         NewPlanetController(g, ++ObjectCounter);

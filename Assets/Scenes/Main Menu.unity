@@ -178,6 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: 22e2e8af087cf475f9c6ca58a0533db9, type: 3}
 --- !u!114 &31336901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1023,6 +1024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: cb9f4059a45b64025b4ef31af45d36cd, type: 3}
 --- !u!114 &296291007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2831,6 +2833,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: 7c6fc02a0b63d4493a20a76d79f8f1a5, type: 3}
 --- !u!114 &1112544330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3779,6 +3782,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: 81c141866fc482d49897b2313e2f906b, type: 3}
 --- !u!114 &1301368540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4131,6 +4135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: b95905c111c5e45d89dae51cd945d2f5, type: 3}
 --- !u!114 &1520943276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4661,6 +4666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: 9d0da1d6e3cff4d60b2199e1e68dd271, type: 3}
 --- !u!114 &1691612521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5498,6 +5504,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: a25c5e27589be46b48a2019de3c25cbe, type: 3}
 --- !u!114 &1962008441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5586,6 +5593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c67a56d62e94747b8f17db1b0ffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planet: {fileID: 4733263487374029647, guid: 451bd1ce357df46cebd5d0f5f205d605, type: 3}
 --- !u!114 &1965756832
 MonoBehaviour:
   m_ObjectHideFlags: 0
