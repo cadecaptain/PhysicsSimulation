@@ -395,6 +395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startVelocity: {x: 0, y: 0}
+  explosion: {fileID: 8276709238037898769, guid: 192d29ddb1325b84696005b5332bf8ac, type: 3}
 --- !u!58 &7183993269367722079
 CircleCollider2D:
   m_ObjectHideFlags: 0

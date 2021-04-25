@@ -9,6 +9,7 @@ public class Gravity : MonoBehaviour
     public Vector2 startVelocity = Vector2.zero;
     TrailRenderer trail;
     internal bool beingDragged;
+    public GameObject explosion;
 
     // Start is called before the first frame update
     void Start()
@@ -91,6 +92,8 @@ public class Gravity : MonoBehaviour
     {
         Debug.Log("collided");
         Gravity otherGrav = collision.gameObject.GetComponent<Gravity>();
+        GameObject e = Instantiate(explosion) as GameObject;
+        e.transform.position = transform.position;
 
         //The collided object that survives is either the more massive one, or arbitrarily decided
         if (this.rigidbody.mass > otherGrav.rigidbody.mass ||

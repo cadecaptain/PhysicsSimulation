@@ -6,3 +6,4 @@
 //Ambient music from https://opengameart.org/content/space-ambient
 //Drag and Drop based on code from https://assetstore.unity.com/packages/tools/gui/simple-drag-and-drop-66449
 //Explosion sound from https://opengameart.org/content/atari-booms
+//Explosion animation from https://opengameart.org/content/explosion-3
