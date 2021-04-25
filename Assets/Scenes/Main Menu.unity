@@ -1760,7 +1760,7 @@ MonoBehaviour:
   m_MinValue: 0.0001
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.5
+  m_Value: 0.2
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -3532,6 +3532,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Binary System
       m_Image: {fileID: 0}
+    - m_Text: Solar System
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -3555,6 +3557,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1914390921}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: changeSelectedLevel
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -4734,7 +4748,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 24300002, guid: 6b9bcbbfff7177046a08835fd359b6b4, type: 2}
   m_audioClip: {fileID: 8300000, guid: 878f622065761b6489cc6007f798cb91, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5396,6 +5410,7 @@ MonoBehaviour:
   presetLevels:
   - Main Scene
   - BinarySystem
+  - Solar System
   mixer: {fileID: 24100000, guid: 6b9bcbbfff7177046a08835fd359b6b4, type: 2}
   backgroundAudio: {fileID: 1700294583}
   CenterOfMassPrefab: {fileID: 6282359617975671423, guid: 0d7f254afa7312f41a4a39f3f66c30d6, type: 3}
