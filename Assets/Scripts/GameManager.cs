@@ -120,14 +120,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Loading ui box " + i);
 
         GameObject pc = Instantiate(PlanetControllerPrefab);
-        pc.transform.SetParent(ControllerView.gameObject.transform,false);
-
-        Slider s = pc.GetComponentInChildren<Slider>();
-        //.onValueChanged = new Slider.SliderEvent();
-        s.value = Mathf.Sqrt(g.rigidbody.mass);
-        s.onValueChanged.AddListener(f => g.changeMass(f*f));
-        pc.GetComponentInChildren<Text>().text = "Mass of Object " + i;
-
+        pc.GetComponent<UIControllerSetup>().setup(g,i);
+        pc.transform.SetParent(ControllerView.gameObject.transform, false);
         planetControllers.Add(g, pc);
     }
 

@@ -7,12 +7,14 @@ public class Gravity : MonoBehaviour
 {
     internal Rigidbody2D rigidbody;
     public Vector2 startVelocity = Vector2.zero;
+    TrailRenderer trail;
     internal bool beingDragged;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        trail = GetComponent<TrailRenderer>();
         rigidbody.velocity = startVelocity;
         SetSize();
     }
@@ -67,6 +69,11 @@ public class Gravity : MonoBehaviour
     {
         rigidbody.mass = m;
         SetSize();
+    }
+        
+    public void changeTrailLength(float l)
+    {
+        trail.time = l;
     }
 
     void SetSize()
