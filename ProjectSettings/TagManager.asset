@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Scripts
   - Sun
+  - Planet
   layers:
   - Default
   - TransparentFX
