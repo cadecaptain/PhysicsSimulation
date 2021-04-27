@@ -54,6 +54,8 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(canvas);
             DontDestroyOnLoad(events);
             DontDestroyOnLoad(backgroundAudio);
+            dropdown.GetComponent<TMP_Dropdown>().onValueChanged.AddListener((i) => changeSelectedLevel(i));
+
         }
         else
         {
@@ -240,6 +242,7 @@ public class GameManager : MonoBehaviour
     public void changeSelectedLevel(int level) 
     {
         this.selectedLevel = level;
+        Debug.Log("level selected " +level);
     }
 
     public void startOnClick()

@@ -90,10 +90,8 @@ public class Gravity : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("collided");
+        Debug.Log("trigger collision");
         Gravity otherGrav = collision.gameObject.GetComponent<Gravity>();
-        GameObject e = Instantiate(explosion) as GameObject;
-        e.transform.position = transform.position;
 
         //The collided object that survives is either the more massive one, or arbitrarily decided
         if (this.rigidbody.mass > otherGrav.rigidbody.mass ||
@@ -105,9 +103,10 @@ public class Gravity : MonoBehaviour
             SetSize();
         } else {
             GameManager.Instance.DestroyBody(this);
-        }   
-
-
+            GameObject e = Instantiate(explosion) as GameObject;
+            e.transform.position = transform.position;
+            e.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].wrapMode = WrapMode.Once;
+        }
 
     }
 
