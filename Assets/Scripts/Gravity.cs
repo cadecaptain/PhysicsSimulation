@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Gravity : MonoBehaviour
 {
-    internal Rigidbody2D rigidbody;
+    internal Rigidbody2D rbody;
     public Vector2 startVelocity = Vector2.zero;
     TrailRenderer trail;
     internal bool beingDragged;
@@ -14,21 +14,21 @@ public class Gravity : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        rbody = GetComponent<Rigidbody2D>();
         trail = GetComponent<TrailRenderer>();
-        rigidbody.velocity = startVelocity;
+        rbody.velocity = startVelocity;
         SetSize();
     }
 
     private void OnMouseDown()
     {
         beingDragged = true;
-        startVelocity = rigidbody.velocity;
+        startVelocity = rbody.velocity;
     }
 
     private void OnMouseDrag()
     {
-        rigidbody.velocity = Vector2.zero;
+        rbody.velocity = Vector2.zero;
         Vector3 pos = GameManager.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
         pos.z = 0;
         this.gameObject.transform.position = pos;
@@ -38,7 +38,7 @@ public class Gravity : MonoBehaviour
     private void OnMouseUp()
     {
         beingDragged = false;
-        rigidbody.velocity = startVelocity;
+        rbody.velocity = startVelocity;
     }
 
     private void FixedUpdate()
@@ -47,7 +47,7 @@ public class Gravity : MonoBehaviour
         { 
             Vector2 v = GameManager.Instance.deltaV(this);
             if (!IsInvalid(v))
-                rigidbody.velocity += v;
+                rbody.velocity += v;
         }
     }
 
@@ -58,20 +58,48 @@ public class Gravity : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (rigidbody)
+        if (rbody)
         {
-            Gizmos.DrawRay(rigidbody.position, rigidbody.velocity);
-            //Gizmos.DrawRay(rigidbody.position, GameManager.Instance.deltaV(this));
+            Gizmos.DrawRay(rbody.position, rbody.velocity);
         }
     }
 
 
     public void changeMass(float m)
     {
-        rigidbody.mass = m;
+        rbody.mass = m;
         SetSize();
     }
-        
+
+    public void changePosX(float m)
+    {
+        Vector3 temp = new Vector3(m, rbody.position.y, 0);
+        rbody.transform.position = temp;
+        SetSize();
+    }
+
+    public void changePosY(float m)
+    {
+        Vector3 temp = new Vector3(rbody.position.x, m, 0);
+        rbody.position = temp;
+        SetSize();
+    }
+
+    public void changeVelocityX(float m)
+    {
+        Vector3 temp = new Vector3(m, rbody.velocity.y, 0);
+        rbody.velocity = temp;
+        SetSize();
+    }
+
+    public void changeVelocityY(float m)
+    {
+        Vector3 temp = new Vector3(rbody.velocity.x, m, 0);
+        rbody.velocity = temp;
+        SetSize();
+    }
+
+
     public void changeTrailLength(float l)
     {
         trail.time = l;
@@ -79,13 +107,13 @@ public class Gravity : MonoBehaviour
 
     void SetSize()
     {
-        float screenSize = 1+Mathf.Log(rigidbody.mass)/8;
+        float screenSize = 1+Mathf.Log(rbody.mass)/8;
         this.gameObject.transform.localScale = Vector3.one * screenSize;
     }
 
     public void changeVelocity(Vector2 v)
     {
-        this.rigidbody.velocity = v;
+        this.rbody.velocity = v;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -94,12 +122,12 @@ public class Gravity : MonoBehaviour
         Gravity otherGrav = collision.gameObject.GetComponent<Gravity>();
 
         //The collided object that survives is either the more massive one, or arbitrarily decided
-        if (this.rigidbody.mass > otherGrav.rigidbody.mass ||
-            (this.rigidbody.mass == otherGrav.rigidbody.mass && Compare(otherGrav)))
+        if (this.rbody.mass > otherGrav.rbody.mass ||
+            (this.rbody.mass == otherGrav.rbody.mass && Compare(otherGrav)))
         {
-            Vector2 netMomentum = rigidbody.velocity * rigidbody.mass + otherGrav.rigidbody.velocity * otherGrav.rigidbody.mass;
-            this.rigidbody.mass += otherGrav.rigidbody.mass;
-            this.rigidbody.velocity = netMomentum / this.rigidbody.mass;
+            Vector2 netMomentum = rbody.velocity * rbody.mass + otherGrav.rbody.velocity * otherGrav.rbody.mass;
+            this.rbody.mass += otherGrav.rbody.mass;
+            this.rbody.velocity = netMomentum / this.rbody.mass;
             SetSize();
         } else {
             GameManager.Instance.DestroyBody(this);

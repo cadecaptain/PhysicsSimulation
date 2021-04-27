@@ -18,7 +18,7 @@ public class SpawnScript : MonoBehaviour
     */
     private static float minPlanetMass = .1f;
     private static float maxPlanetMass = 3f;
-    private static float spawnDelay = 15f;
+    //private static float spawnDelay = 15f;
     private static float maxPlanetSize = 0.2f;
 
     /*
@@ -70,13 +70,13 @@ public class SpawnScript : MonoBehaviour
     {
         GameObject planet = Instantiate(prefab);
         Gravity g = planet.GetComponentInChildren<Gravity>();
-        g.rigidbody = planet.GetComponentInChildren<Rigidbody2D>();
+        //RigidBody2D rbody = planet.GetComponentInChildren<Rigidbody2D>();
         planet.transform.position = position;
         g.transform.position = position;
-        g.rigidbody.position = position;
+        g.GetComponent<Rigidbody2D>().position = position;
 
-        float m = minPlanetMass + Random.value * (maxPlanetMass - minPlanetMass);
-        g.rigidbody.mass = m;
+        float m = minPlanetMass + (Random.value * (maxPlanetMass - minPlanetMass));
+        g.GetComponent<Rigidbody2D>().mass = m;
 
         float scale = 1f + Random.value * maxPlanetSize;
         planet.transform.localScale = new Vector2(scale, scale);
@@ -86,8 +86,6 @@ public class SpawnScript : MonoBehaviour
         g.startVelocity =
             (Random.value * 8 + 5) * (Quaternion.Euler(0,0,90) * 
             toCenter).normalized;
-
-        Debug.Log(g.startVelocity+" "+toCenter);
 
         planet.GetComponentInChildren<SpriteRenderer>().color = new Color(Random.value, Random.value, Random.value);
 

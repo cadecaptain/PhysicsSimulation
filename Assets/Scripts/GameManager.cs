@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 {
     static float G = -1f;
     float cameraShiftTolerance = 3;
-    float zoomInTolerance = .35f;
+    float zoomInTolerance = .4f;
     float zoomOutTolerance = .1f;
     int zoomTicks = 0;
     const int zoomDelay = 5;
@@ -20,12 +20,12 @@ public class GameManager : MonoBehaviour
     Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
     public Camera camera;
 
-    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton;
+    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton, menuButton;
     public GameObject titleText, creditsText, howToText;
     public GameObject volumeSlider;
     public GameObject canvas;
     public GameObject events;
-    public GameObject background;
+    public GameObject background, howToBackground, creditsBackground;
     public GameObject cellContainer;
     public GameObject dropdown;
     public List<string> presetLevels;
@@ -40,11 +40,10 @@ public class GameManager : MonoBehaviour
     public GameObject sunPrefab;
 
     public GameObject scrollView;
-    public GameObject ControllerView;
+    public GameObject Content;
     public GameObject PlanetControllerPrefab;
 
     int ObjectCounter = 0;
-
 
     private void Awake()
     {
@@ -67,6 +66,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void Update()
+    {
+        foreach (KeyValuePair<Gravity, GameObject> keyValue in planetControllers)
+        {
+            Gravity g = keyValue.Key;
+            GameObject pc = keyValue.Value;
+
+            UIControllerSetup ui = pc.GetComponent<UIControllerSetup>();
+            ui.massText.GetComponent<Text>().text = "Mass: " + Mathf.Round(g.GetComponent<Rigidbody2D>().mass);
+            ui.posXText.GetComponent<Text>().text = "X: " + Mathf.Round(g.GetComponent<Rigidbody2D>().position.x * 100);
+            ui.posYText.GetComponent<Text>().text = "Y: " + Mathf.Round(g.GetComponent<Rigidbody2D>().position.y * 100);
+            ui.velocityXText.GetComponent<Text>().text = "Vx: " + Mathf.Round(g.GetComponent<Rigidbody2D>().velocity.x * 100);
+            ui.velocityYText.GetComponent<Text>().text = "Vy: " + Mathf.Round(g.GetComponent<Rigidbody2D>().velocity.y * 100);
+        }
+    }
+
     void LoadScene()
     {
         physObjects = new List<Gravity>();
@@ -81,7 +96,6 @@ public class GameManager : MonoBehaviour
         SetUpCoM();
     }
 
-
     void SetUpCoM() {
         centerOfMassIndicator = Instantiate(CenterOfMassPrefab, CenterOfSystem(), Quaternion.identity);
         SpriteRenderer sr = centerOfMassIndicator.gameObject.GetComponent<SpriteRenderer>();
@@ -93,9 +107,8 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!camera)
+        if (!camera) 
             LoadScene();
-
         CameraReposition();
         CullFaroffObjects();
         centerOfMassIndicator.transform.position = CenterOfSystem();
@@ -106,85 +119,54 @@ public class GameManager : MonoBehaviour
         Vector2 c = CenterOfSystem();
         HashSet<Gravity> toRemove = new HashSet<Gravity>();
         foreach (Gravity go in physObjects) {
-            if ((go.rigidbody.position - c).magnitude > 30) {
+            if ((go.GetComponent<Rigidbody2D>().position - c).magnitude > 40) 
+            {
                 toRemove.Add(go);
             }
         }
 
         foreach (Gravity go in toRemove) {
             DestroyBody(go);
-
+            --ObjectCounter;
         }
-
     }
 
-
     public void NewPlanetController(Gravity g, int i) {
-        Debug.Log("Loading ui box " + i);
-
         GameObject pc = Instantiate(PlanetControllerPrefab);
         pc.GetComponent<UIControllerSetup>().setup(g,i);
-        pc.transform.SetParent(ControllerView.gameObject.transform, false);
+        pc.transform.SetParent(Content.gameObject.transform, false);
         planetControllers.Add(g, pc);
     }
 
     public void CreateBody(Vector2 pos, GameObject planet) {
-        Debug.Log("Creating new Planet");
         Gravity g = SpawnScript.SpawnNewPlanet(pos, planet);
-
         physObjects.Add(g);
         NewPlanetController(g, ++ObjectCounter);
-
     }
 
     public void DestroyBody(Gravity g) {
         physObjects.Remove(g);
-        Debug.Log("CoM at " +
-                centerOfMassIndicator.transform.position +
-                 ", deleting object at " + g.rigidbody.transform.position);
-
         Destroy(g.gameObject.transform.parent.gameObject);
         Destroy(planetControllers[g]);
         planetControllers.Remove(g);
+        --ObjectCounter;
     }
 
-
-    public static void TogglePause()
-    {
-        Time.timeScale = 1 - Time.timeScale;
-    }
-
-    public static void PauseTime()
-    {
-        Time.timeScale = 0;
-    }
-
-    public static void StartTime()
-    {
-        Time.timeScale = 1;
-    }
-
-    public static bool isPaused()
-    {
-        return Time.timeScale == 0;
-    }
-
-    Vector2 CenterOfSystem()
+    public Vector2 CenterOfSystem()
     {
         Vector2 v = Vector2.zero;
         float totalMass = 0.0f;
         foreach (Gravity go in physObjects)
         {
             Vector3 p = go.gameObject.transform.position;
-            v += go.rigidbody.mass * new Vector2(p.x, p.y);
-            totalMass += go.rigidbody.mass;
+            v += go.GetComponent<Rigidbody2D>().mass * new Vector2(p.x, p.y);
+            totalMass += go.GetComponent<Rigidbody2D>().mass;
         }
         if (physObjects.Count > 0) v /= totalMass;
         return v;
     }
 
-
-    void CameraReposition()
+    public void CameraReposition()
     {
         Vector3 center = CenterOfSystem();
         center.z = camera.transform.position.z;
@@ -197,7 +179,6 @@ public class GameManager : MonoBehaviour
         foreach (Gravity g in physObjects)
         {
             Vector3 v = camera.WorldToViewportPoint(g.transform.position);
-            Debug.Log(v);
             needToZoomOut |= v.x < zoomOutTolerance
                           || v.x > (1 - zoomOutTolerance)
                           || v.y < zoomOutTolerance
@@ -221,7 +202,7 @@ public class GameManager : MonoBehaviour
 
         if (zoomTicks > zoomDelay || zoomTicks < -zoomDelay)
         {
-            camera.orthographicSize += .005f * Mathf.Sign(zoomTicks);
+            camera.orthographicSize += .025f * Mathf.Sign(zoomTicks);
         }
     }
 
@@ -231,10 +212,10 @@ public class GameManager : MonoBehaviour
 
         foreach (Gravity go in physObjects)
         {
-            Vector2 diff = obj.rigidbody.position - go.rigidbody.position;
+            Vector2 diff = obj.GetComponent<Rigidbody2D>().position - go.GetComponent<Rigidbody2D>().position;
             float rsq = diff.sqrMagnitude;
             if (go != obj)
-                c += go.rigidbody.mass * diff.normalized / rsq;
+                c += go.GetComponent<Rigidbody2D>().mass * diff.normalized / rsq;
         }
 
         return G * c * Time.fixedDeltaTime;
@@ -243,7 +224,6 @@ public class GameManager : MonoBehaviour
     public void changeSelectedLevel(int level) 
     {
         this.selectedLevel = level;
-        Debug.Log("level selected " +level);
     }
 
     public void startOnClick()
@@ -255,9 +235,30 @@ public class GameManager : MonoBehaviour
         background.SetActive(false);
         dropdown.SetActive(false);
         pauseButton.SetActive(true);
+        menuButton.SetActive(true);
         scrollView.SetActive(true);
         cellContainer.SetActive(true);
         StartCoroutine(LoadYourAsyncScene(presetLevels[selectedLevel]));
+    }
+
+    public void menuOnClick()
+    {
+        titleText.SetActive(true);
+        startButton.SetActive(true);
+        howToButton.SetActive(true);
+        creditsButton.SetActive(true);
+        background.SetActive(true);
+        dropdown.SetActive(true);
+        pauseButton.SetActive(false);
+        menuButton.SetActive(false);
+        scrollView.SetActive(false);
+        cellContainer.SetActive(false);
+        foreach (Transform child in Content.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        planetControllers.Clear();
+        StartCoroutine(LoadYourAsyncScene("Main Menu"));
     }
 
     public void creditsOnClick()
@@ -269,6 +270,7 @@ public class GameManager : MonoBehaviour
         dropdown.SetActive(false);
         backButton.SetActive(true);
         creditsText.SetActive(true);
+        creditsBackground.SetActive(true);
     }
 
     public void howToOnClick()
@@ -280,6 +282,7 @@ public class GameManager : MonoBehaviour
         dropdown.SetActive(false);
         backButton.SetActive(true);
         howToText.SetActive(true);
+        howToBackground.SetActive(true);
     }
 
     public void volumeOnClick()
@@ -304,11 +307,36 @@ public class GameManager : MonoBehaviour
         backButton.SetActive(false);
         creditsText.SetActive(false);
         howToText.SetActive(false);
+        howToBackground.SetActive(false);
+        creditsBackground.SetActive(false);
+    }
+
+    public void pauseOnClick()
+    {
+        Time.timeScale = 1 - Time.timeScale;
+    }
+
+    public void pauseTime()
+    {
+        Time.timeScale = 0;
+    }
+
+    public void startTime()
+    {
+        Time.timeScale = 1;
+    }
+
+    public bool isPaused()
+    {
+        if (Time.timeScale == 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     IEnumerator LoadYourAsyncScene(string scene)
     {
-        Debug.Log("Loading " + scene);
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
 
         // Wait until the asynchronous scene fully loads

@@ -9,10 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: d1b2ebfa03d4c4141ac664c969428b48
   - enabled: 1
-    path: Assets/Scenes/Main Scene.unity
+    path: Assets/Scenes/Simple System.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/BinarySystem.unity
+    path: Assets/Scenes/Binary System.unity
     guid: 6db44732cca251a478a5084a8e75f147
   - enabled: 1
     path: Assets/Scenes/Solar System.unity

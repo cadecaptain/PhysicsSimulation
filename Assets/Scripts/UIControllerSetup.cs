@@ -5,22 +5,31 @@ using UnityEngine.UI;
 
 public class UIControllerSetup : MonoBehaviour
 {
-    public GameObject massText;
+    public GameObject massLabel;
     public GameObject massSlider;
-    public GameObject trailText;
+    public GameObject trailLabel;
     public GameObject trailSlider;
+    public GameObject massText, posXText, posYText, velocityXText, velocityYText, massInputField, posXInputField, posYInputField, velocityXInputField, velocityYInputField;
+    public Gravity grav;
 
     public void setup(Gravity g, int i) {
-        massText.GetComponent<Text>().text = "Mass of Object " + i;
+        grav = g;
+        massLabel.GetComponent<Text>().text = "Mass of Object " + i;
         Slider mSlider = massSlider.GetComponent<Slider>();
-        mSlider.value = Mathf.Sqrt(g.rigidbody.mass);
+        mSlider.value = Mathf.Sqrt(g.GetComponent<Rigidbody2D>().mass);
         mSlider.onValueChanged.AddListener(f => g.changeMass(f * f));
+        massInputField.GetComponent<InputField>().onEndEdit.AddListener(f => g.changeMass(float.Parse(f)));
+        posXInputField.GetComponent<InputField>().onEndEdit.AddListener(f => g.changePosX(float.Parse(f)/100));
+        posYInputField.GetComponent<InputField>().onEndEdit.AddListener(f => g.changePosY(float.Parse(f)/100));
+        velocityXInputField.GetComponent<InputField>().onEndEdit.AddListener(f => g.changeVelocityX(float.Parse(f)/100));
+        velocityYInputField.GetComponent<InputField>().onEndEdit.AddListener(f => g.changeVelocityY(float.Parse(f)/100));
 
-        trailText.GetComponent<Text>().text = "Length of Trail "+ i;
+        trailLabel.GetComponent<Text>().text = "Length of Trail "+ i;
         Slider tSlider = trailSlider.GetComponent<Slider>();
         tSlider.value = 5;
         tSlider.onValueChanged.AddListener(l => g.changeTrailLength(l));
 
     }
+
 
 }
