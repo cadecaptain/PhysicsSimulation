@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     public GameObject canvas;
     public GameObject events;
     public GameObject background;
+    public GameObject cellContainer;
     public GameObject dropdown;
     public List<string> presetLevels;
     private int selectedLevel;
@@ -255,6 +256,7 @@ public class GameManager : MonoBehaviour
         dropdown.SetActive(false);
         pauseButton.SetActive(true);
         scrollView.SetActive(true);
+        cellContainer.SetActive(true);
         StartCoroutine(LoadYourAsyncScene(presetLevels[selectedLevel]));
     }
 
