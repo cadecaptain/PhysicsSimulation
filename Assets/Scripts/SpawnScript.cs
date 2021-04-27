@@ -20,13 +20,14 @@ public class SpawnScript : MonoBehaviour
     private static float maxPlanetMass = 3f;
     //private static float spawnDelay = 15f;
     private static float maxPlanetSize = 0.2f;
+    static float orbitConstant = 15;
 
     /*
 
     private List<GameObject> planets = new List<GameObject>();
 
     void Start()
-    {
+    {   
         StartCoroutine(SpawnPlanets());
 
         sun.GetComponent<Rigidbody2D>().velocity = sunVelocity;
@@ -81,11 +82,13 @@ public class SpawnScript : MonoBehaviour
         float scale = 1f + Random.value * maxPlanetSize;
         planet.transform.localScale = new Vector2(scale, scale);
 
-        Vector2 toCenter = GameManager.Instance.deltaV(g); 
+        Vector2 toCenter = GameManager.Instance.deltaV(g);
+
+        float distToCenter = (GameManager.Instance.CenterOfSystem() - position).magnitude;
 
         g.startVelocity =
-            (Random.value * 8 + 5) * (Quaternion.Euler(0,0,90) * 
-            toCenter).normalized;
+           Quaternion.Euler(0, 0, 90) * toCenter.normalized *
+           orbitConstant / Mathf.Sqrt(distToCenter);
 
         planet.GetComponentInChildren<SpriteRenderer>().color = new Color(Random.value, Random.value, Random.value);
 
