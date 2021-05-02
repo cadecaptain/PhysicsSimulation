@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
     public Camera camera;
 
-    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton, menuButton;
+    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton, menuButton, showButton, hideButton, pauseMenu;
     public GameObject titleText, creditsText, howToText;
     public GameObject volumeSlider;
     public GameObject canvas;
@@ -234,8 +234,7 @@ public class GameManager : MonoBehaviour
         creditsButton.SetActive(false);
         background.SetActive(false);
         dropdown.SetActive(false);
-        pauseButton.SetActive(true);
-        menuButton.SetActive(true);
+        showButton.SetActive(true);
         scrollView.SetActive(true);
         cellContainer.SetActive(true);
         StartCoroutine(LoadYourAsyncScene(presetLevels[selectedLevel]));
@@ -249,8 +248,8 @@ public class GameManager : MonoBehaviour
         creditsButton.SetActive(true);
         background.SetActive(true);
         dropdown.SetActive(true);
-        pauseButton.SetActive(false);
-        menuButton.SetActive(false);
+        pauseMenu.SetActive(false);
+        showButton.SetActive(false);
         scrollView.SetActive(false);
         cellContainer.SetActive(false);
         foreach (Transform child in Content.transform)
@@ -303,6 +302,7 @@ public class GameManager : MonoBehaviour
         startButton.SetActive(true);
         howToButton.SetActive(true);
         creditsButton.SetActive(true);
+        pauseMenu.SetActive(false);
         dropdown.SetActive(true);
         backButton.SetActive(false);
         creditsText.SetActive(false);
@@ -333,6 +333,21 @@ public class GameManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void menuToggle()
+    {
+        if (pauseMenu.active)
+        {
+            pauseMenu.SetActive(false);
+            showButton.SetActive(true);
+        }
+        else
+        {
+            pauseMenu.SetActive(true);
+            showButton.SetActive(false);
+
+        }
     }
 
     IEnumerator LoadYourAsyncScene(string scene)
