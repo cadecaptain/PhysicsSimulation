@@ -14,13 +14,14 @@ public class GameManager : MonoBehaviour
     float zoomOutTolerance = .1f;
     int zoomTicks = 0;
     const int zoomDelay = 5;
+    const float SIM_TIME_STEP = 1 / 100;
 
     public static GameManager Instance { get; private set; }
     List<Gravity> physObjects;
     Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
     public Camera camera;
 
-    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton, menuButton, showButton, hideButton, pauseMenu;
+    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, timeSlider, menuButton, showButton, hideButton, pauseMenu;
     public GameObject titleText, creditsText, howToText;
     public GameObject volumeSlider;
     public GameObject canvas;
@@ -55,7 +56,8 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(events);
             DontDestroyOnLoad(backgroundAudio);
             dropdown.GetComponent<TMP_Dropdown>().onValueChanged.AddListener((i) => changeSelectedLevel(i));
-
+            timeSlider.GetComponent<Slider>().onValueChanged.AddListener((i) => setTimeScale(i));
+            Time.fixedDeltaTime = SIM_TIME_STEP;
         }
         else
         {
@@ -313,17 +315,23 @@ public class GameManager : MonoBehaviour
 
     public void pauseOnClick()
     {
-        Time.timeScale = 1 - Time.timeScale;
+        setTimeScale(1 - Time.timeScale);
+    }
+
+    public void setTimeScale(float t)
+    {
+        Time.timeScale = t;
+        Time.fixedDeltaTime = SIM_TIME_STEP * Time.timeScale;
     }
 
     public void pauseTime()
     {
-        Time.timeScale = 0;
+        setTimeScale(0);
     }
 
     public void startTime()
     {
-        Time.timeScale = 1;
+        setTimeScale(1);
     }
 
     public bool isPaused()
