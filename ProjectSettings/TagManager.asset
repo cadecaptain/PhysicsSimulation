@@ -9,6 +9,14 @@ TagManager:
   - Planet
   - Black Hole
   - Trash
+  - Earth
+  - Mercury
+  - Venus
+  - Mars
+  - Jupiter
+  - Saturn
+  - Neptune
+  - Uranus
   layers:
   - Default
   - TransparentFX

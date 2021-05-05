@@ -13,9 +13,9 @@ public class UIControllerSetup : MonoBehaviour
     public GameObject massText, posXText, posYText, velocityXText, velocityYText, massInputField, posXInputField, posYInputField, velocityXInputField, velocityYInputField;
     public Gravity grav;
 
-    public void setup(Gravity g, int i) {
+    public void setup(Gravity g, string name) {
         grav = g;
-        massLabel.GetComponent<Text>().text = "Mass of Object " + i;
+        massLabel.GetComponent<Text>().text = name;
         Slider mSlider = massSlider.GetComponent<Slider>();
         mSlider.value = Mathf.Sqrt(g.GetComponent<Rigidbody2D>().mass);
         mSlider.onValueChanged.AddListener(f => g.changeMass(f * f));
@@ -25,7 +25,7 @@ public class UIControllerSetup : MonoBehaviour
         velocityXInputField.GetComponent<InputField>().onEndEdit.AddListener(f => g.changeVelocityX(float.Parse(f)/100));
         velocityYInputField.GetComponent<InputField>().onEndEdit.AddListener(f => g.changeVelocityY(float.Parse(f)/100));
 
-        trailLabel.GetComponent<Text>().text = "Length of Trail "+ i;
+        trailLabel.GetComponent<Text>().text = "Length of Trail";
         Slider tSlider = trailSlider.GetComponent<Slider>();
         tSlider.value = 5;
         tSlider.onValueChanged.AddListener(l => g.changeTrailLength(l));
@@ -34,7 +34,6 @@ public class UIControllerSetup : MonoBehaviour
 
     public void trash()
     {
-        Debug.Log("clicked!");
         GameManager.Instance.deleteOnClick(trashCan.gameObject.transform.parent.gameObject);
     }
 

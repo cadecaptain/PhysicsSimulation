@@ -41,7 +41,7 @@ public class VelocityHandler : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        Vector3 delta = Camera.current.ScreenToWorldPoint(Input.mousePosition) - body.transform.position;
+        Vector3 delta = Camera.main.ScreenToWorldPoint(Input.mousePosition) - body.transform.position;
         Vector3 v = delta * stretchFactor;
         body.velocity = v;
         SetVector(v);

@@ -21,6 +21,9 @@ public class SpawnScript : MonoBehaviour
     //private static float spawnDelay = 15f;
     private static float maxPlanetSize = 0.2f;
     static float orbitConstant = 15;
+    public static Color temp = Color.red;
+    public static string planettemp;
+    public static Color[] allcol = new Color[9];
 
     /*
 
@@ -67,9 +70,20 @@ public class SpawnScript : MonoBehaviour
     }
 
     */
+
     static public Gravity SpawnNewPlanet(Vector2 position, GameObject prefab)
     {
+        allcol[0] = new Color(0, 0, 0, 1);
+        allcol[1] = new Color(0, 0, 1, 1);
+        allcol[2] = new Color(0, 1, 1, 1);
+        allcol[3] = new Color(0.5f, 0.5f, 0.5f, 1);
+        allcol[4] = new Color(0, 1, 0, 1);
+        allcol[5] = new Color(1, 0, 1, 1);
+        allcol[6] = new Color(1, 0, 0, 1);
+        allcol[7] = new Color(1, 0.92f, 0.016f, 1);
+        allcol[8] = new Color(1, 1, 1, 1);
         GameObject planet = Instantiate(prefab);
+        planettemp = prefab.tag;
         Gravity g = planet.GetComponentInChildren<Gravity>();
         //RigidBody2D rbody = planet.GetComponentInChildren<Rigidbody2D>();
         planet.transform.position = position;
@@ -91,10 +105,20 @@ public class SpawnScript : MonoBehaviour
         g.startVelocity =
            Quaternion.Euler(0, 0, 90) * toCenter.normalized *
            orbitConstant / Mathf.Sqrt(distToCenter);
-
-        planet.GetComponentInChildren<SpriteRenderer>().color = new Color(Random.value, Random.value, Random.value);
+        temp = allcol[(int)Mathf.Round(Random.Range(0, 8))];
+        planet.GetComponentInChildren<SpriteRenderer>().color = temp;
 
         return g;
+    }
+
+    static public Color getColor()
+    {
+        return temp;
+    }
+
+    static public string getPrefab()
+    {
+        return planettemp;
     }
 
     private void Update()

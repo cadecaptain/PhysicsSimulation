@@ -1,4 +1,4 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -46,6 +46,9 @@ public class GameManager : MonoBehaviour
     public GameObject scrollView;
     public GameObject Content;
     public GameObject PlanetControllerPrefab;
+
+    public Color colortemp;
+    public string planettemp;
 
     Vector2 mouseDragPos;
 
@@ -102,15 +105,58 @@ public class GameManager : MonoBehaviour
     {
         physObjects = new List<Gravity>();
         camera = FindObjectOfType<Camera>();
-        camera.transform.gameObject.tag = "Camera";
 
         foreach (Gravity g in FindObjectsOfType<Gravity>())
         {
             physObjects.Add(g);
-            NewPlanetController(g, ++ObjectCounter);
+            NewPlanetController(g, "Normal " + g.getTag());
         }
 
         SetUpCoM();
+    }
+
+    public string colorToString(Color color)
+    {
+        Vector4 temp = color;
+        if (temp == new Vector4(1, 0, 0, 1))
+        {
+            return "Red";
+        }
+        else if (temp == new Vector4(0, 0, 0, 1))
+        {
+            return "Black";
+        }
+        else if (temp == new Vector4(0, 0, 1, 1))
+        {
+            return "Blue";
+        }
+        else if (temp == new Vector4(0.5f, 0.5f, 0.5f, 1))
+        {
+            return "Gray";
+        }
+        else if (temp == new Vector4(0, 1, 0, 1))
+        {
+            return "Green";
+        }
+        else if (temp == new Vector4(1, 0, 1, 1))
+        {
+            return "Magenta";
+        }
+        else if (temp == new Vector4(0, 1, 1, 1))
+        {
+            return "Cyan";
+        }
+        else if (temp == new Vector4(1, 1, 1, 1))
+        {
+            return "White";
+        }
+        else if (temp == new Vector4(1, 0.92f, 0.016f, 1))
+        {
+            return "Yellow";
+        }
+        else
+            return "Normal";
+
     }
 
     void SetUpCoM() {
@@ -150,17 +196,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void NewPlanetController(Gravity g, int i) {
+    public void NewPlanetController(Gravity g, string name) {
         GameObject pc = Instantiate(PlanetControllerPrefab);
-        pc.GetComponent<UIControllerSetup>().setup(g,i);
+        pc.GetComponent<UIControllerSetup>().setup(g,name);
         pc.transform.SetParent(Content.gameObject.transform, false);
         planetControllers.Add(g, pc);
     }
 
     public void CreateBody(Vector2 pos, GameObject planet) {
         Gravity g = SpawnScript.SpawnNewPlanet(pos, planet);
+        colortemp = SpawnScript.getColor();
+        planettemp = SpawnScript.getPrefab();
         physObjects.Add(g);
-        NewPlanetController(g, ++ObjectCounter);
+        ++ObjectCounter;
+        NewPlanetController(g, colorToString(colortemp) + "  " + planettemp);
     }
 
     public void DestroyBody(Gravity g) {
@@ -376,7 +425,7 @@ public class GameManager : MonoBehaviour
                 planetControllers.Remove(item.Key);
                 physObjects.Remove(item.Key);
                 item.Key.delete();
-                //Destroy(item.Key);
+                Destroy(item.Key);
                 Destroy(item.Value);
                 --ObjectCounter;
                 break;

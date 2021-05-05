@@ -29,7 +29,7 @@ public class Gravity : MonoBehaviour
     private void OnMouseDrag()
     {
         rbody.velocity = Vector2.zero;
-        Vector3 pos = Camera.current.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         pos.z = 0;
         this.gameObject.transform.position = pos;
 
@@ -41,7 +41,10 @@ public class Gravity : MonoBehaviour
         rbody.velocity = startVelocity;
     }
 
-
+    public string getTag()
+    {
+        return rbody.gameObject.transform.parent.gameObject.tag;
+    }
 
 
     private void FixedUpdate()
@@ -124,6 +127,7 @@ public class Gravity : MonoBehaviour
         Destroy(rbody.gameObject.transform.parent.gameObject);
     }
 
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log("trigger collision");
