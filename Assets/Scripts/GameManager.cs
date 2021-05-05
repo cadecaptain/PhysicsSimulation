@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,17 +15,19 @@ public class GameManager : MonoBehaviour
     float zoomOutTolerance = .1f;
     int zoomTicks = 0;
     const int zoomDelay = 5;
+    const float SIM_TIME_STEP = 1 / 100;
 
     public static GameManager Instance { get; private set; }
     List<Gravity> physObjects;
     Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
     public Camera camera;
 
-    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, pauseButton, menuButton;
+    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, timeSlider, menuButton, showButton, hideButton, pauseMenu, autoCameraToggle;
     public GameObject titleText, creditsText, howToText;
     public GameObject volumeSlider;
     public GameObject canvas;
     public GameObject events;
+    EventSystem eventSystem;
     public GameObject background, howToBackground, creditsBackground;
     public GameObject cellContainer;
     public GameObject dropdown;
@@ -43,7 +46,12 @@ public class GameManager : MonoBehaviour
     public GameObject Content;
     public GameObject PlanetControllerPrefab;
 
+    Vector2 mouseDragPos;
+
     int ObjectCounter = 0;
+    bool AutoCamera = true;
+    Vector3 startCameraPos;
+    bool draggingNothing;
 
     private void Awake()
     {
@@ -55,7 +63,10 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(events);
             DontDestroyOnLoad(backgroundAudio);
             dropdown.GetComponent<TMP_Dropdown>().onValueChanged.AddListener((i) => changeSelectedLevel(i));
-
+            timeSlider.GetComponent<Slider>().onValueChanged.AddListener((i) => setTimeScale(i));
+            autoCameraToggle.GetComponent<Toggle>().onValueChanged.AddListener(b => setAutoCamera(b));
+            Time.fixedDeltaTime = SIM_TIME_STEP;
+            eventSystem = events.GetComponent<EventSystem>();
         }
         else
         {
@@ -80,6 +91,8 @@ public class GameManager : MonoBehaviour
             ui.velocityXText.GetComponent<Text>().text = "Vx: " + Mathf.Round(g.GetComponent<Rigidbody2D>().velocity.x * 100);
             ui.velocityYText.GetComponent<Text>().text = "Vy: " + Mathf.Round(g.GetComponent<Rigidbody2D>().velocity.y * 100);
         }
+
+        CameraReposition();
     }
 
     void LoadScene()
@@ -105,11 +118,11 @@ public class GameManager : MonoBehaviour
         sr.sortingOrder = 5;        
     }
 
+
     void FixedUpdate()
     {
         if (!camera) 
             LoadScene();
-        CameraReposition();
         CullFaroffObjects();
         centerOfMassIndicator.transform.position = CenterOfSystem();
     }
@@ -168,41 +181,65 @@ public class GameManager : MonoBehaviour
 
     public void CameraReposition()
     {
-        Vector3 center = CenterOfSystem();
-        center.z = camera.transform.position.z;
-        if ((camera.transform.position - center).magnitude > cameraShiftTolerance) 
-            camera.transform.position = Vector3.Lerp(camera.transform.position, center, .005f);
-
-        bool needToZoomOut = false;
-        bool needToZoomIn = true;
-
-        foreach (Gravity g in physObjects)
+        if (AutoCamera)
         {
-            Vector3 v = camera.WorldToViewportPoint(g.transform.position);
-            needToZoomOut |= v.x < zoomOutTolerance
-                          || v.x > (1 - zoomOutTolerance)
-                          || v.y < zoomOutTolerance
-                          || v.y > (1 - zoomOutTolerance);
 
-            needToZoomIn &= v.x > zoomInTolerance
-                         && v.x < (1 - zoomInTolerance)
-                         && v.y > zoomInTolerance
-                         && v.y < (1 - zoomInTolerance);
+            Vector3 center = CenterOfSystem();
+            center.z = camera.transform.position.z;
+            if ((camera.transform.position - center).magnitude > cameraShiftTolerance)
+                camera.transform.position = Vector3.Lerp(camera.transform.position, center, .005f);
+
+            bool needToZoomOut = false;
+            bool needToZoomIn = true;
+
+            foreach (Gravity g in physObjects)
+            {
+                Vector3 v = camera.WorldToViewportPoint(g.transform.position);
+                needToZoomOut |= v.x < zoomOutTolerance
+                              || v.x > (1 - zoomOutTolerance)
+                              || v.y < zoomOutTolerance
+                              || v.y > (1 - zoomOutTolerance);
+
+                needToZoomIn &= v.x > zoomInTolerance
+                             && v.x < (1 - zoomInTolerance)
+                             && v.y > zoomInTolerance
+                             && v.y < (1 - zoomInTolerance);
+            }
+
+            if (needToZoomOut)
+            {
+                zoomTicks++;
+            }
+            else if (needToZoomIn)
+            {
+                zoomTicks--;
+            }
+            else { zoomTicks = 0; }
+
+            if (zoomTicks > zoomDelay || zoomTicks < -zoomDelay)
+            {
+                camera.orthographicSize += .025f * Mathf.Sign(zoomTicks);
+            }
         }
+        else {
 
-        if (needToZoomOut)
-        {
-            zoomTicks++;
-        }
-        else if (needToZoomIn)
-        {
-            zoomTicks--;
-        }
-        else { zoomTicks = 0; }
+            if (camera.orthographicSize > .01) 
+                camera.orthographicSize -= .2f * Input.mouseScrollDelta.y;
 
-        if (zoomTicks > zoomDelay || zoomTicks < -zoomDelay)
-        {
-            camera.orthographicSize += .025f * Mathf.Sign(zoomTicks);
+            Vector3 dragLoc = camera.ScreenToWorldPoint(Input.mousePosition);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                mouseDragPos = camera.ScreenToWorldPoint(Input.mousePosition);
+                startCameraPos = camera.transform.position;
+                draggingNothing = !eventSystem.IsPointerOverGameObject() && !Physics2D.OverlapPoint(dragLoc);
+            }
+
+            if (Input.GetMouseButton(0) && draggingNothing)
+            {
+                Vector2 move = new Vector2(dragLoc.x, dragLoc.y) - mouseDragPos;
+                camera.transform.position = startCameraPos - .85f * (Vector3) move;
+            }
         }
     }
 
@@ -226,6 +263,11 @@ public class GameManager : MonoBehaviour
         this.selectedLevel = level;
     }
 
+    public void setAutoCamera(bool c)
+    {
+        AutoCamera = c;
+    }
+
     public void startOnClick()
     {
         titleText.SetActive(false);
@@ -234,8 +276,7 @@ public class GameManager : MonoBehaviour
         creditsButton.SetActive(false);
         background.SetActive(false);
         dropdown.SetActive(false);
-        pauseButton.SetActive(true);
-        menuButton.SetActive(true);
+        showButton.SetActive(true);
         scrollView.SetActive(true);
         cellContainer.SetActive(true);
         StartCoroutine(LoadYourAsyncScene(presetLevels[selectedLevel]));
@@ -249,8 +290,8 @@ public class GameManager : MonoBehaviour
         creditsButton.SetActive(true);
         background.SetActive(true);
         dropdown.SetActive(true);
-        pauseButton.SetActive(false);
-        menuButton.SetActive(false);
+        pauseMenu.SetActive(false);
+        showButton.SetActive(false);
         scrollView.SetActive(false);
         cellContainer.SetActive(false);
         foreach (Transform child in Content.transform)
@@ -303,6 +344,7 @@ public class GameManager : MonoBehaviour
         startButton.SetActive(true);
         howToButton.SetActive(true);
         creditsButton.SetActive(true);
+        pauseMenu.SetActive(false);
         dropdown.SetActive(true);
         backButton.SetActive(false);
         creditsText.SetActive(false);
@@ -313,17 +355,23 @@ public class GameManager : MonoBehaviour
 
     public void pauseOnClick()
     {
-        Time.timeScale = 1 - Time.timeScale;
+        setTimeScale(1 - Time.timeScale);
+    }
+
+    public void setTimeScale(float t)
+    {
+        Time.timeScale = t;
+        Time.fixedDeltaTime = SIM_TIME_STEP * Time.timeScale;
     }
 
     public void pauseTime()
     {
-        Time.timeScale = 0;
+        setTimeScale(0);
     }
 
     public void startTime()
     {
-        Time.timeScale = 1;
+        setTimeScale(1);
     }
 
     public bool isPaused()
@@ -333,6 +381,21 @@ public class GameManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void menuToggle()
+    {
+        if (pauseMenu.active)
+        {
+            pauseMenu.SetActive(false);
+            showButton.SetActive(true);
+        }
+        else
+        {
+            pauseMenu.SetActive(true);
+            showButton.SetActive(false);
+
+        }
     }
 
     IEnumerator LoadYourAsyncScene(string scene)
