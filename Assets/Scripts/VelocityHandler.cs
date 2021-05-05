@@ -31,6 +31,7 @@ public class VelocityHandler : MonoBehaviour
         this.gameObject.transform.position = body.position;
         SetVector(body.velocity);
     }
+    
 
     private void OnMouseDown()
     {
@@ -40,7 +41,7 @@ public class VelocityHandler : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        Vector3 delta = gameManager.camera.ScreenToWorldPoint(Input.mousePosition) - body.transform.position;
+        Vector3 delta = Camera.current.ScreenToWorldPoint(Input.mousePosition) - body.transform.position;
         Vector3 v = delta * stretchFactor;
         body.velocity = v;
         SetVector(v);

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UIControllerSetup : MonoBehaviour
 {
+    public GameObject trashCan;
     public GameObject massLabel;
     public GameObject massSlider;
     public GameObject trailLabel;
@@ -29,6 +30,12 @@ public class UIControllerSetup : MonoBehaviour
         tSlider.value = 5;
         tSlider.onValueChanged.AddListener(l => g.changeTrailLength(l));
 
+    }
+
+    public void trash()
+    {
+        Debug.Log("clicked!");
+        GameManager.Instance.deleteOnClick(trashCan.gameObject.transform.parent.gameObject);
     }
 
 

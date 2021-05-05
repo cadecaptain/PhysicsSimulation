@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     List<Gravity> physObjects;
     Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
     public Camera camera;
+    
 
     public GameObject startButton, creditsButton, howToButton, volumeButton, volumeButtontemp, backButton, timeSlider, menuButton, showButton, hideButton, pauseMenu, autoCameraToggle;
     public GameObject titleText, creditsText, howToText;
@@ -91,14 +92,17 @@ public class GameManager : MonoBehaviour
             ui.velocityXText.GetComponent<Text>().text = "Vx: " + Mathf.Round(g.GetComponent<Rigidbody2D>().velocity.x * 100);
             ui.velocityYText.GetComponent<Text>().text = "Vy: " + Mathf.Round(g.GetComponent<Rigidbody2D>().velocity.y * 100);
         }
-
-        CameraReposition();
+        if (physObjects.Count > 0)
+        {
+            CameraReposition();
+        }
     }
 
     void LoadScene()
     {
         physObjects = new List<Gravity>();
         camera = FindObjectOfType<Camera>();
+        camera.transform.gameObject.tag = "Camera";
 
         foreach (Gravity g in FindObjectsOfType<Gravity>())
         {
@@ -121,8 +125,10 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!camera) 
+        if (!camera)
+        {
             LoadScene();
+        }
         CullFaroffObjects();
         centerOfMassIndicator.transform.position = CenterOfSystem();
     }
@@ -359,6 +365,27 @@ public class GameManager : MonoBehaviour
         setTimeScale(1 - Time.timeScale);
     }
 
+    public void deleteOnClick(GameObject container = null)
+    {
+        int check1 = planetControllers.Count;
+        Debug.Log("we have this many:" + check1);
+        foreach (KeyValuePair<Gravity, GameObject> item in planetControllers)
+        {
+            if (container = item.Value)
+            {
+                planetControllers.Remove(item.Key);
+                physObjects.Remove(item.Key);
+                item.Key.delete();
+                //Destroy(item.Key);
+                Destroy(item.Value);
+                --ObjectCounter;
+                break;
+            }
+        }
+        int check2 = planetControllers.Count;
+        Debug.Log("we have this many:" + check2);
+    }
+
     public void setTimeScale(float t)
     {
         Time.timeScale = t;
@@ -386,7 +413,7 @@ public class GameManager : MonoBehaviour
 
     public void menuToggle()
     {
-        if (pauseMenu.active)
+        if (pauseMenu.activeSelf)
         {
             pauseMenu.SetActive(false);
             showButton.SetActive(true);

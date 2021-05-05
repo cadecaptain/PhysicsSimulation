@@ -29,7 +29,7 @@ public class Gravity : MonoBehaviour
     private void OnMouseDrag()
     {
         rbody.velocity = Vector2.zero;
-        Vector3 pos = GameManager.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 pos = Camera.current.ScreenToWorldPoint(Input.mousePosition);
         pos.z = 0;
         this.gameObject.transform.position = pos;
 
@@ -39,25 +39,9 @@ public class Gravity : MonoBehaviour
     {
         beingDragged = false;
         rbody.velocity = startVelocity;
-        if (isHoveringTrash()) GameManager.Instance.DestroyBody(this);
     }
 
 
-    private bool isHoveringTrash()
-    {
-        PointerEventData p = new PointerEventData(EventSystem.current);
-        p.position = Input.mousePosition;
-        List<RaycastResult> hits = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(p, hits);
-        bool hoveringTrash = false;
-
-        foreach (RaycastResult r in hits)
-        {
-            hoveringTrash |= r.gameObject.CompareTag("Trash");
-        }
-
-        return hoveringTrash;
-    }
 
 
     private void FixedUpdate()
@@ -133,6 +117,11 @@ public class Gravity : MonoBehaviour
     public void changeVelocity(Vector2 v)
     {
         this.rbody.velocity = v;
+    }
+
+    public void delete()
+    {
+        Destroy(rbody.gameObject.transform.parent.gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
