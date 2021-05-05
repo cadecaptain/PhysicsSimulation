@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     Dictionary<Gravity, GameObject> planetControllers = new Dictionary<Gravity, GameObject>();
     public Camera camera;
 
-    public GameObject startButton, creditsButton, howToButton, volumeButton, backButton, timeSlider, menuButton, showButton, hideButton, pauseMenu, autoCameraToggle;
+    public GameObject startButton, creditsButton, howToButton, volumeButton, volumeButtontemp, backButton, timeSlider, menuButton, showButton, hideButton, pauseMenu, autoCameraToggle;
     public GameObject titleText, creditsText, howToText;
     public GameObject volumeSlider;
     public GameObject canvas;
@@ -279,6 +279,7 @@ public class GameManager : MonoBehaviour
         showButton.SetActive(true);
         scrollView.SetActive(true);
         cellContainer.SetActive(true);
+        Destroy(volumeButtontemp);
         StartCoroutine(LoadYourAsyncScene(presetLevels[selectedLevel]));
     }
 
