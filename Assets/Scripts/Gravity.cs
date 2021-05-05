@@ -39,7 +39,26 @@ public class Gravity : MonoBehaviour
     {
         beingDragged = false;
         rbody.velocity = startVelocity;
+        if (isHoveringTrash()) GameManager.Instance.DestroyBody(this);
     }
+
+
+    private bool isHoveringTrash()
+    {
+        PointerEventData p = new PointerEventData(EventSystem.current);
+        p.position = Input.mousePosition;
+        List<RaycastResult> hits = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(p, hits);
+        bool hoveringTrash = false;
+
+        foreach (RaycastResult r in hits)
+        {
+            hoveringTrash |= r.gameObject.CompareTag("Trash");
+        }
+
+        return hoveringTrash;
+    }
+
 
     private void FixedUpdate()
     {
